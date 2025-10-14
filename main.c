@@ -16,7 +16,7 @@ int main(void) {
     printf("6-Bit Kodlama Simulasyonu (stdbool.h versiyonu)\n");
 
     while (1) {  // ana döngü,dogru giris yapılana kadar tekrar tekrar çalisir
-        bool isValid = true;
+        bool isValid = true;  // gecerli giris kontrolu
 
         printf("Birinci rakami giriniz (0-9): "); // kullanıicidan karakter alinir
         if (scanf(" %c", &ch1) != 1) {
