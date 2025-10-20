@@ -1,64 +1,73 @@
-#include <stdio.h>
+#include <stdio.h> // girdi çıkış işlemleri için atadık
+#include <stdbool.h> // c dilinde bool veri tipini kullanmak için atadık true,false gibi kontrolleri sağlar
 
-// Girdi tamponunu temizleyen fonksiyon
+// Girdi tamponu temizleyen küçük yardımcı fonksiyon
 void clearInputBuffer(void) {
     int c;
     while ((c = getchar()) != '\n' && c != EOF) {
-        // Boş döngü: tüm karakterleri okur ve yok eder
+        // boş döngü: tüm karakterleri okur ve çöpe atar
     }
 }
 
 int main(void) {
-    double yatirim_getirisi, risksiz_faiz, standart_sapma, sharpe_orani;
+    char ch1, ch2; // kullanıcının girdiği karakterler
+    int num1, num2, sum; // num1 ve num2 bu karakterlerin sayıya çevrilmiş halleri sum ise toplanmış hali
 
-    printf("=== Sharpe Orani Hesaplayici ===\n");
+    printf("6-Bit Kodlama Simulasyonu (stdbool.h versiyonu)\n");
 
-    printf("Yatirim getirisi (%% cinsinden): ");
-    if (scanf("%lf", &yatirim_getirisi) != 1) {
-        printf("Gecersiz giris! Lütfen sayi giriniz.\n");
-        return 1;
+    while (1) { // ana döngü,doğru girdi yapılana kadar tekrar tekrar çalışır
+        bool isValid = true; // geçerli giriş kontrolü
+
+        printf("Birinci rakamı giriniz (0-9) : ");  //kullanicidan karakter alinir
+        if (scanf(" %c", &ch1) != 1) {
+            printf("Hata: Girdi okunamadı.\n\n"); // eğer girilen karakter rakam değilse hata verir döngü başa döner
+            clearInputBuffer(); // fazla karakterleri temizlemek için kullanılır
+            continue;
+        }
+
+        // fazladan karakter girildiyse tamponu temizler, hala daha rakam dışında 12,d gibi karakterler varsa temizler ve hata verir
+        if (getchar() != '\n') {
+            printf("Hata: Tek bir rakam girmelisiniz.\n\n");
+            clearInputBuffer();
+            continue;
+        }
+
+        num1 = ch1 - '0'; // '0' karakterinin ASCII değeri çıkarılarak karakterden sayı elde edilir. örn; 3-0=3
+        if (num1 < 0 || num1 > 9) {
+            printf("Hata: İlk girdi 0-9 aralığında tek haneli rakam olmalı.\n\n");
+            continue;
+        }
+
+        printf("Ikinci rakamı giriniz (0-9): "); // aynı işlemler 2. girilen karakter içinde uygulanır
+        if (scanf(" %c", &ch2) != 1) {
+            printf("Hata: Girdi okunamadı.\n\n");
+            clearInputBuffer();
+            continue;
+        }
+
+        // yine fazladan karakter kontrolü
+        if (getchar() != '\n') {
+            printf("Hata: Tek bir rakam girmelisiniz.\n\n");
+            clearInputBuffer();
+            continue;
+        }
+
+        num2 = ch2 - '0';
+        if (num2 < 0 || num2 > 9) {
+            printf("Hata: İkinci girdi 0-9 aralığında tek haneli rakam olmalı.\n\n");
+            continue;
+        }
+
+        sum = num1 + num2;
+
+        if (sum > 9) { // toplam tek haneli değilse hata verir aynı zamanda sonucu da ekrana yazar
+            printf("Hata: Sonuç %d oldu, 9'dan büyük! Tek haneli toplam bekleniyor.\n\n", sum);
+            continue;
+        }
+
+        printf("Toplam sonucu (6-bit simule): %c\n", sum + '0'); // toplam tekrar karaktere çevrilir
+        break;
     }
-    clearInputBuffer();
 
-    printf("Risksiz faiz orani (%% cinsinden): ");
-    if (scanf("%lf", &risksiz_faiz) != 1) {
-        printf("Gecersiz giris! Lütfen sayi giriniz.\n");
-        return 1;
-    }
-    clearInputBuffer();
-
-    printf("Portfoyun standart sapmasi (%% cinsinden): ");
-    if (scanf("%lf", &standart_sapma) != 1) {
-        printf("Gecersiz giris! Lütfen sayi giriniz.\n");
-        return 1;
-    }
-    clearInputBuffer();
-
-    // Negatif veya sıfır standart sapma kontrolü
-    if (standart_sapma <= 0) {
-        printf("Standart sapma 0 veya negatif olamaz.\n");
-        return 1;
-    }
-
-    // Sharpe oranı hesaplama
-    sharpe_orani = (yatirim_getirisi - risksiz_faiz) / standart_sapma;
-
-    printf("\nSharpe Orani = %.2f\n", sharpe_orani);
-
-    // Yorumsal değerlendirme
-    if (sharpe_orani < 0)
-        printf("-> Sharpe orani %.2f: Yatirim, risksiz getiriye gore daha kotu performans gostermis.\n", sharpe_orani);
-    else if (sharpe_orani == 0)
-        printf("-> Sharpe orani %.2f: Yatirim, sadece risksiz getiri kadar kazandirmis. Ekstra getirisi yok.\n", sharpe_orani);
-    else if (sharpe_orani < 1)
-        printf("-> Sharpe orani %.2f: Risk-getiri orani dusuk. Iyi gunler.\n", sharpe_orani);
-    else if (sharpe_orani < 2)
-        printf("-> Sharpe orani %.2f: Iyi bir performans. Iyi gunler.\n", sharpe_orani);
-    else if (sharpe_orani < 3)
-        printf("-> Sharpe orani %.2f: Cok iyi bir performans. Iyi gunler.\n", sharpe_orani);
-    else if (sharpe_orani >= 3)
-        printf("-> Sharpe orani %.2f: Mukemmel bir performans! Iyi gunler.\n", sharpe_orani);
-
-    return 0;
+    return 0; // sonlanır
 }
-
